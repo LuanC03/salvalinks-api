@@ -1,13 +1,13 @@
-package com.example.demo;
+package com.salvalinks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SalvalinksApiApplication {
+public class SalvaLinksApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SalvalinksApiApplication.class, args);
+		SpringApplication.run(SalvaLinksApplication.class, args);
 	}
 
 }

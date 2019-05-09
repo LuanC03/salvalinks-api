@@ -31,4 +31,5 @@ public class UserController {
 	public User addClient(@RequestBody User user) throws Exception {
 		return this.userService.cadastrar(user);
 	}
+	
 }

@@ -8,13 +8,15 @@ public class User {
     @Id
     private String id;
     private String name;
-    private int age;
+    private String email;
+    private String senha;
     public User() {
     }
  
-    public User(String name, int age) {
+    public User(String name, String email, String senha) {
         this.name = name;
-        this.age = age;
+        this.email = email;
+        this.senha = senha;
     }
  
     public String getId() {
@@ -31,17 +33,25 @@ public class User {
         this.name = name;
     }
  
-    public int getAge() {
-        return age;
+    public String getEmail() {
+        return email;
     }
-    public void setAge(int age) {
-        this.age = age;
+    public void setEmail(String email) {
+        this.email = email;
     }
-    @Override
+    public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	@Override
     public String toString() {
         return "User{" +
                 ", name='" + name + '\'' +
-                ", Age=" + age +
+                ", Email=" + email +
                 '}';
     }
 }

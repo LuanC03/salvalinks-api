@@ -13,14 +13,23 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	Util util;
 
 	public List<User> getAll() {
 		return this.userRepository.findAll();
 	}
 
 	public User cadastrar(User user) throws Exception {
-		this.userRepository.save(user);
-		return user;
+		if (!util.validaSenha(user.getSenha())) {
+			throw new Exception("Senha muito curta");
+		}
+		
+		String senhaCriptografada = util.criptografar(user.getSenha());
+		User newUser = new User(user.getName(), user.getEmail(), senhaCriptografada);
+		this.userRepository.save(newUser);
+		return newUser;
 
 	}
 }

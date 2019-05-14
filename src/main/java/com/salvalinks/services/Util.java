@@ -5,23 +5,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Util {
-	public boolean validaSenha(String senha) {
+	public boolean validatePassword(String password) {
 		boolean status = true;
 
-		if (senha.length() < 6)
+		if (password.length() < 6)
 			status = false;
 		return status;
 	}
 
-	public boolean verificaSenha(String senhaUsuario, String senhaInformada) {
+	public boolean verifyPassword(String userPassword, String knownPassword) {
 		boolean status = false;
-		String senhaUsuarioDes = criptografar(senhaInformada);
-		if (senhaUsuario.equals(senhaUsuarioDes))
+		String decryptedPassword = encrypt(knownPassword);
+		if (userPassword.equals(decryptedPassword))
 			status = true;
 		return status;
 	}
 
-	public String criptografar(String senha) {
+	public String encrypt(String senha) {
 		return Base64.encodeBase64String(senha.getBytes());
 	}
 }

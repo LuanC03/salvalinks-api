@@ -1,5 +1,7 @@
 package com.salvalinks.models;
 
+import java.util.Set;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
  
@@ -9,14 +11,17 @@ public class User {
     private String id;
     private String name;
     private String email;
-    private String senha;
+    private String password;
+    private Set<Link> links;
+    
     public User() {
+    	
     }
  
-    public User(String name, String email, String senha) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
     }
  
     public String getId() {
@@ -39,14 +44,22 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getSenha() {
-		return senha;
+    public String getPassword() {
+		return password;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
+	public Set<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(Set<Link> links) {
+		this.links = links;
+	}
+	
 	@Override
     public String toString() {
         return "User{" +
@@ -54,4 +67,6 @@ public class User {
                 ", Email=" + email +
                 '}';
     }
+
+	
 }

@@ -25,28 +25,49 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
+	/**
+	 * Retorna todos os usuários cadastrados no sistema
+	 * 
+	 */
 	@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public List<User> getUsers() {
 		return userService.getAll();
 	}
 	
+	/**
+	 * Cadastra um usuário no sitema
+	 * @param user
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/users/cadastrar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<User> addClient(@RequestBody User user) throws Exception {
 		return new ResponseEntity<>(this.userService.registerUser(user),HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/users/logar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<User> login(@RequestParam String nome, @RequestParam String senha) throws Exception {
-		return new ResponseEntity<>(userService.logar(nome, senha), HttpStatus.OK);
+	public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) throws Exception {
+		return new ResponseEntity<>(userService.logar(email, password), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/links", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public Set<Link> getLinks(@RequestBody User user) throws Exception {
-		return userService.getLinks(user);
+	public Set<Link> getLinks(@RequestParam String email) throws Exception {
+		return userService.getLinks(email);
 	}
 	
-	@RequestMapping(value = "links/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-	public ResponseEntity<Link> addLink(@RequestBody User user, @RequestParam String name) throws Exception {
-		return new ResponseEntity<>(userService.addLink(user, name), HttpStatus.OK);
+	@RequestMapping(value = "/users/delete", method = RequestMethod.DELETE)
+	public ResponseEntity<HttpStatus> deleteAll() throws Exception {
+		this.userService.deleteAll();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "links/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	public ResponseEntity<Link> addLink(@RequestParam String email, @RequestBody Link link) throws Exception {
+		return new ResponseEntity<>(userService.addLink(email, link.getName(),link.getHref(),link.getImportance(),link.getType()), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "links/remove", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
+	public ResponseEntity<Link> removeLink(@RequestParam String email, @RequestParam String name) throws Exception {
+		return new ResponseEntity<>(userService.removeLink(email, name), HttpStatus.OK);
+	}
+	
 }

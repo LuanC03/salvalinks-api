@@ -1,5 +1,6 @@
 package com.salvalinks.services;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private LinkRepository linkRepository;
 
@@ -26,9 +27,13 @@ public class UserService {
 	public List<User> getAll() {
 		return this.userRepository.findAll();
 	}
-	
-	public User getByName(String name) {
-		return this.userRepository.findByName(name);
+
+	public User getByEmail(String email) {
+		return this.userRepository.findByEmail(email);
+	}
+
+	public void deleteAll() {
+		this.userRepository.deleteAll();
 	}
 
 	public User registerUser(User user) throws Exception {
@@ -41,42 +46,46 @@ public class UserService {
 		this.userRepository.save(newUser);
 		return newUser;
 	}
-	
-	public User logar(String name, String password) throws Exception {
-		User user = this.getByName(name);
+
+	public User logar(String email, String password) throws Exception {
+		User user = this.getByEmail(email);
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");
-		
+
 		return user;
 	}
-	
-	public Set<Link> getLinks(User user) throws Exception {
+
+	public Set<Link> getLinks(String email) throws Exception {
+		User user = this.userRepository.findByEmail(email);
 		if (user.getLinks().isEmpty()) {
 			throw new Exception("Usuario não possui nenhum link!");
 		}
-		
+
 		return user.getLinks();
 	}
-	
+
 	public Link getLinkByName(String name) {
 		return this.linkRepository.findByName(name);
 	}
-	
+
 	public Link getLinkById(String id) {
 		return this.linkRepository.findById(id);
 	}
 	
-	public Link addLink(User user, String name) throws Exception {
+
+	public Link addLink(String email, String name, String href, String importance, String type) throws Exception {
+		User user = this.userRepository.findByEmail(email);
 		if (user.getLinks().contains(getLinkByName(name))) {
 			throw new Exception("Link já adicionado!");
 		}
-		Link link = new Link(name);
+		Link link = new Link(name,href,importance,type);
 		user.getLinks().add(link);
 		this.userRepository.save(user);
 		return link;
 	}
-	
-	public Link removeLink(User user, String name) throws Exception {
+
+	public Link removeLink(String email, String name) throws Exception {
+		User user = this.userRepository.findByEmail(email);
 		if (!user.getLinks().contains(getLinkByName(name))) {
 			throw new Exception("Link não encontrado!");
 		}

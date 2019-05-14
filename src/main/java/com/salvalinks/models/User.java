@@ -1,5 +1,6 @@
 package com.salvalinks.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -22,6 +23,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.links = new HashSet<>();
     }
  
     public String getId() {

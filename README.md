@@ -4,14 +4,14 @@
 
 * ##### 1ª Sprint
     - [ ] RF-01 Login de usuário
-    - [ ] RF-02 Inserir link
+    - [x] RF-02 Inserir link
     - [ ] RF-03 Salvar link através do botão compartilhar
     - [ ] RF-04 Gerar título automaticamente
-    - [ ] RF-05 Salvar data do link
-    - [ ] RF-10 Identifica tipo do link
+    - [x] RF-05 Salvar data do link
+    - [x] RF-10 Identifica tipo do link
     - [ ] RF-21 Listagem de links
     - [ ] RF-22 O Usuário poderá renomear e excluir links
-    - [ ] RF-24 O usuário ao salvar o link deve classificar em ordem de importância.
+    - [x] RF-24 O usuário ao salvar o link deve classificar em ordem de importância.
     - [ ] RF-26 Cadastrar usuário
     
  * ##### 2ª Sprint

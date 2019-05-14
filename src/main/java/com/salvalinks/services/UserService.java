@@ -75,7 +75,7 @@ public class UserService {
 
 	public Link addLink(String email, String name, String href, String importance, String type) throws Exception {
 		User user = this.userRepository.findByEmail(email);
-		if (user.getLinks().contains(getLinkByName(name))) {
+		if (user.containsLink(href)) {
 			throw new Exception("Link já adicionado!");
 		}
 		Link link = new Link(name,href,importance,type);
@@ -84,14 +84,13 @@ public class UserService {
 		return link;
 	}
 
-	public Link removeLink(String email, String name) throws Exception {
+	public void removeLink(String email, String href) throws Exception {
 		User user = this.userRepository.findByEmail(email);
-		if (!user.getLinks().contains(getLinkByName(name))) {
+		if (!user.containsLink(href)) {
 			throw new Exception("Link não encontrado!");
 		}
-		Link link = getLinkByName(name);
-		user.getLinks().remove(link);
+		user.removeLink(href);
 		this.userRepository.save(user);
-		return link;
+
 	}
 }

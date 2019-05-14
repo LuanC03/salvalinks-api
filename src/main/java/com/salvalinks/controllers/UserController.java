@@ -66,8 +66,9 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "links/remove", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	public ResponseEntity<Link> removeLink(@RequestParam String email, @RequestParam String name) throws Exception {
-		return new ResponseEntity<>(userService.removeLink(email, name), HttpStatus.OK);
+	public ResponseEntity<HttpStatus> removeLink(@RequestParam String email, @RequestParam String href) throws Exception {
+		this.userService.removeLink(email,href);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 }

@@ -75,7 +75,7 @@ public class User {
 
 	public boolean containsLink(String name) {
 		boolean retorno = false;
-		Iterator iterator = this.getLinks().iterator();
+		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
 			if (((Link) iterator.next()).getName().equals(name)) {
 				retorno = true;
@@ -86,32 +86,31 @@ public class User {
 
 	public Link removeLink(String name) {
 		Link retorno = null;
-		Iterator iterator = this.getLinks().iterator();
+		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
 			Link link = (Link) iterator.next();
 			if (link.getName().equals(name)) {
-				this.getLinks().remove(link);
 				retorno = link;
 			}
 		}
+		this.getLinks().remove(retorno);
 		return retorno;
 	}
 	
-
 	public List<Link> orderByNome() {
-		List list = this.toArray();
+		List<Link> list = this.toArray();
         Collections.sort(list, new NameComparator());
         return list;
     }
 	
 	public List<Link> orderByDate() {
-		List list = this.toArray();
+		List<Link> list = this.toArray();
         Collections.sort(list, new DateComparator());
         return list;
     }
 
 	public List<Link> toArray() {
-		List list = new ArrayList<>(this.getLinks());
+		ArrayList<Link> list = new ArrayList<>(this.getLinks());
 		return list;
 	}
 	

@@ -10,7 +10,7 @@
     - [x] RF-05 Salvar data do link
     - [x] RF-10 Identifica tipo do link
     - [x] RF-21 Listagem de links
-    - [ ] RF-22 O Usuário poderá renomear e excluir links
+    - [x] RF-22 O Usuário poderá renomear e excluir links
     - [x] RF-24 O usuário ao salvar o link deve classificar em ordem de importância.
     - [ ] RF-26 Cadastrar usuário
     

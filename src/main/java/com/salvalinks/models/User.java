@@ -1,11 +1,17 @@
 package com.salvalinks.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.salvalinks.services.DateComparator;
+import com.salvalinks.services.NameComparator;
 
 @Document(collection = "users")
 public class User {
@@ -67,26 +73,48 @@ public class User {
 		this.links = links;
 	}
 
-	public boolean containsLink(String href) {
+	public boolean containsLink(String name) {
 		boolean retorno = false;
 		Iterator iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
-			if (((Link) iterator.next()).getHref().equals(href)) {
+			if (((Link) iterator.next()).getName().equals(name)) {
 				retorno = true;
 			}
 		}
 		return retorno;
 	}
 
-	public void removeLink(String href) {
+	public Link removeLink(String name) {
+		Link retorno = null;
 		Iterator iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
-			if (((Link) iterator.next()).getHref().equals(href)) {
-				this.getLinks().remove((Link)iterator.next());
+			Link link = (Link) iterator.next();
+			if (link.getName().equals(name)) {
+				this.getLinks().remove(link);
+				retorno = link;
 			}
 		}
+		return retorno;
 	}
+	
 
+	public List<Link> orderByNome() {
+		List list = this.toArray();
+        Collections.sort(list, new NameComparator());
+        return list;
+    }
+	
+	public List<Link> orderByDate() {
+		List list = this.toArray();
+        Collections.sort(list, new DateComparator());
+        return list;
+    }
+
+	public List<Link> toArray() {
+		List list = new ArrayList<>(this.getLinks());
+		return list;
+	}
+	
 	@Override
 	public String toString() {
 		return "User{" + ", name='" + name + '\'' + ", Email=" + email + '}';

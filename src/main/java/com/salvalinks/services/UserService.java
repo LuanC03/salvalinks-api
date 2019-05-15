@@ -1,5 +1,6 @@
 package com.salvalinks.services;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class UserService {
 
 	public Link addLink(String email, String name, String href, String importance, String type) throws Exception {
 		User user = this.userRepository.findByEmail(email);
-		if (user.containsLink(href)) {
+		if (user.containsLink(name)) {
 			throw new Exception("Link já adicionado!");
 		}
 		Link link = new Link(name,href,importance,type);
@@ -84,13 +85,47 @@ public class UserService {
 		return link;
 	}
 
-	public void removeLink(String email, String href) throws Exception {
+	public Link removeLink(String email, String name) throws Exception {
 		User user = this.userRepository.findByEmail(email);
-		if (!user.containsLink(href)) {
+		if (!user.containsLink(name)) {
 			throw new Exception("Link não encontrado!");
 		}
-		user.removeLink(href);
+		Link retorno = user.removeLink(name);
 		this.userRepository.save(user);
+		return retorno;
 
 	}
+	
+	public List<Link> listByName(String email) {
+		User user = this.userRepository.findByEmail(email);
+		return user.orderByNome();
+	}
+	
+	public List<Link> listByDate(String email) {
+		User user = this.userRepository.findByEmail(email);
+		return user.orderByDate();
+	}
+	
+//	public Link renameLink(String email, String name, String newName ) throws Exception {
+//		User user = this.userRepository.findByEmail(email);
+//		if (!user.containsLink(name)) {
+//			throw new Exception("Link não encontrado!");
+//		}
+//		Link retorno = null;
+//		Iterator iterator = user.getLinks().iterator();
+//		while (iterator.hasNext()) {
+//			Link link = (Link) iterator.next();
+//			if (link.getName().equals(name)) {
+//				user.removeLink(name);
+//				link.setName(newName);
+//				user.getLinks().add(link);
+//				retorno = link;
+//			}
+//		}
+//		
+//		return retorno;
+//		
+//	}
+//	
+	
 }

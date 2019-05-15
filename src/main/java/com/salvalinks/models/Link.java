@@ -24,7 +24,7 @@ public class Link {
 		this.name = name;
 		this.href = href;
 		this.data = new Date().toString();
-		this.importance = "NORMAL";
+		this.importance = importance;
 		this.type = type;
 	}
 

@@ -2,6 +2,7 @@ package com.salvalinks.services;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,28 +63,52 @@ public class UserService {
 
 	public User registerUser(User user) throws Exception {
 		if (!util.validatePassword(user.getPassword())) {
-			throw new Exception("Senha muito curta!");
+			throw new Exception("Senha muito curta, minimo 6 caracteres!");
 		}
+		
+		String code = getCode();
 		String encryptedPassword = util.encrypt(user.getPassword());
-		User newUser = new User(user.getName(), user.getEmail(), encryptedPassword);
+		User newUser = new User(user.getName(), user.getEmail(), encryptedPassword, code);
 		this.userRepository.save(newUser);
-		sendConfirmationEmail(newUser);
+		sendConfirmationEmail(newUser, code);
 		return newUser;
 	}
 	
-	private void sendConfirmationEmail(User user) {
+	public Boolean validation(String email, String code) throws Exception {
+		User user = getByEmail(email);
+		if (!user.getValidationCode().equals(code)) {
+			throw new Exception("Codigo invalido");
+		}
+		
+		user.setEnabled(true);
+		this.userRepository.save(user);
+		return true;
+			
+	}
+	
+	private void sendConfirmationEmail(User user, String code) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(user.getEmail());
-		mailMessage.setSubject("Quase lá :)!");
-		mailMessage.setFrom("NoReply.Salvalinks@gmail.com");
-		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, clique no link a seguir : "
-				+ "http://localhost:8080/confirm-account?token=acharo");
+		mailMessage.setSubject("Quase lá :)");
+		mailMessage.setFrom("SalvaLinks");
+		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, use o código a seguir : "
+				+ code);
 
 		emailSenderService.sendEmail(mailMessage);
 	}
 
+	private String getCode() {
+		String code = "";
+		Random r = new Random();
+		code = Integer.toString(Math.abs(r.nextInt()),36).substring(0, 6);
+		return code.toUpperCase();
+	}
+	
 	public User logar(String email, String password) throws Exception {
 		User user = this.getByEmail(email);
+		if (user == null)
+			throw new Exception("Email não cadastrado!");
+		
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");
 

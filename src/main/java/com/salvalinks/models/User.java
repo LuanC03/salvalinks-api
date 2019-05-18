@@ -22,17 +22,19 @@ public class User {
 	private String password;
 	private Set<Link> links;
 	private boolean enabled;
+	private String validationCode;
 
 	public User() {
 
 	}
 
-	public User(String name, String email, String password) {
+	public User(String name, String email, String password, String code) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.links = new HashSet<>();
 		this.enabled = false;
+		this.validationCode= code;
 	}
 
 	public String getId() {
@@ -79,9 +81,8 @@ public class User {
 		boolean retorno = false;
 		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
-			if (((Link) iterator.next()).getName().equals(name)) {
+			if (((Link) iterator.next()).getName().equals(name))
 				retorno = true;
-			}
 		}
 		return retorno;
 	}
@@ -91,9 +92,8 @@ public class User {
 		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
 			Link link = (Link) iterator.next();
-			if (link.getName().equals(name)) {
+			if (link.getName().equals(name))
 				retorno = link;
-			}
 		}
 		this.getLinks().remove(retorno);
 		return retorno;
@@ -123,11 +123,18 @@ public class User {
 
 	public void setEnabled(boolean b) {
 		this.enabled = b;
-		
 	}
 
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	public String getValidationCode() {
+		return validationCode;
+	}
+
+	public void setValidationCode(String validationCode) {
+		this.validationCode = validationCode;
 	}
 
 }

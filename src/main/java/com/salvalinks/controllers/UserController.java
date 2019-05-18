@@ -52,6 +52,12 @@ public class UserController {
 	public ResponseEntity<User> cadastrar(@RequestBody User user) throws Exception {
 		return new ResponseEntity<User>(this.userService.registerUser(user), HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/users/cadastrar/validar",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public ResponseEntity<Boolean> validar(@RequestParam String email, @RequestParam String code) throws Exception {
+		
+		return new ResponseEntity<Boolean>(this.userService.validation(email, code),HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/users/logar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) throws Exception {

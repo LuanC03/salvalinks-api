@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.salvalinks.models.Link;
@@ -19,6 +20,9 @@ public class UserService {
 
 	@Autowired
 	private Util util;
+	
+	@Autowired
+	private EmailSenderService emailSenderService;
 
 	public List<User> getAll() {
 		return this.userRepository.findAll();
@@ -60,11 +64,22 @@ public class UserService {
 		if (!util.validatePassword(user.getPassword())) {
 			throw new Exception("Senha muito curta!");
 		}
-
 		String encryptedPassword = util.encrypt(user.getPassword());
 		User newUser = new User(user.getName(), user.getEmail(), encryptedPassword);
 		this.userRepository.save(newUser);
+		sendConfirmationEmail(newUser);
 		return newUser;
+	}
+	
+	private void sendConfirmationEmail(User user) {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setSubject("Quase lá :)!");
+		mailMessage.setFrom("NoReply.Salvalinks@gmail.com");
+		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, clique no link a seguir : "
+				+ "http://localhost:8080/confirm-account?token=acharo");
+
+		emailSenderService.sendEmail(mailMessage);
 	}
 
 	public User logar(String email, String password) throws Exception {

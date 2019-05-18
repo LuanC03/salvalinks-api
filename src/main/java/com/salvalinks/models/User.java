@@ -21,6 +21,7 @@ public class User {
 	private String email;
 	private String password;
 	private Set<Link> links;
+	private boolean enabled;
 
 	public User() {
 
@@ -31,6 +32,7 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.links = new HashSet<>();
+		this.enabled = false;
 	}
 
 	public String getId() {
@@ -117,6 +119,15 @@ public class User {
 	@Override
 	public String toString() {
 		return "User{" + ", name='" + name + '\'' + ", Email=" + email + '}';
+	}
+
+	public void setEnabled(boolean b) {
+		this.enabled = b;
+		
+	}
+
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 }

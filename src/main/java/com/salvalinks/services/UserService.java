@@ -62,9 +62,13 @@ public class UserService {
 	}
 
 	public User registerUser(User user) throws Exception {
-		if (!util.validatePassword(user.getPassword())) {
+		if (!util.validatePassword(user.getPassword()))
 			throw new Exception("Senha muito curta, minimo 6 caracteres!");
-		}
+		
+		User check = this.getByEmail(user.getEmail());
+		
+		if (check != null)
+			throw new Exception("Email já cadastrado, mandamos um link, checa lá ;)");
 		
 		String code = getCode();
 		String encryptedPassword = util.encrypt(user.getPassword());
@@ -76,9 +80,8 @@ public class UserService {
 	
 	public Boolean validation(String email, String code) throws Exception {
 		User user = getByEmail(email);
-		if (!user.getValidationCode().equals(code)) {
+		if (!user.getValidationCode().equals(code))
 			throw new Exception("Codigo invalido");
-		}
 		
 		user.setEnabled(true);
 		this.userRepository.save(user);
@@ -91,7 +94,7 @@ public class UserService {
 		mailMessage.setTo(user.getEmail());
 		mailMessage.setSubject("Quase lá :)");
 		mailMessage.setFrom("SalvaLinks");
-		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, use o link a seguir : salvalinks.herokuapp.com/confirm-account?token="
+		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, use o link a seguir: salvalinks.herokuapp.com/confirm-account?token="
 			+ code+"&email="+user.getEmail());
 
 		emailSenderService.sendEmail(mailMessage);
@@ -108,6 +111,9 @@ public class UserService {
 		User user = this.getByEmail(email);
 		if (user == null)
 			throw new Exception("Email não cadastrado!");
+		
+		if (!user.isEnabled())
+			throw new Exception("Email ainda não confirmado!");
 		
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");

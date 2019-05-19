@@ -91,8 +91,8 @@ public class UserService {
 		mailMessage.setTo(user.getEmail());
 		mailMessage.setSubject("Quase lá :)");
 		mailMessage.setFrom("SalvaLinks");
-		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, use o código a seguir : "
-				+ code);
+		mailMessage.setText("Olá "+ user.getName()+", para confimar seu cadastro em salvaLinks, use o link a seguir : salvalinks.herokuapp.com/confirm-account?token="
+			+ code+"&email="+user.getEmail());
 
 		emailSenderService.sendEmail(mailMessage);
 	}

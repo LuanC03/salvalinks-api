@@ -48,15 +48,24 @@ public class UserController {
 	 * @throws Exception
 	 */
 
-	@RequestMapping(value = "/users/cadastrar",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/users/cadastrar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<User> cadastrar(@RequestBody User user) throws Exception {
 		return new ResponseEntity<User>(this.userService.registerUser(user), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/users/cadastrar/validar",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+
+	@RequestMapping(value = "/confirm-account", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token") String token,
+			@RequestParam("email") String email) throws Exception {
+		this.userService.validation(email, token);
+		modelAndView.setViewName("accountVerified");
+
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/users/cadastrar/validar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
 	public ResponseEntity<Boolean> validar(@RequestParam String email, @RequestParam String code) throws Exception {
-		
-		return new ResponseEntity<Boolean>(this.userService.validation(email, code),HttpStatus.OK);
+
+		return new ResponseEntity<Boolean>(this.userService.validation(email, code), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/users/logar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)

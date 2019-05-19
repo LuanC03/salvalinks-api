@@ -1,5 +1,6 @@
 package com.salvalinks.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +35,11 @@ public class UserController {
 
 	/**
 	 * Retorna todos os usuários cadastrados no sistema
+	 * @throws IOException 
 	 * 
 	 */
 	@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public List<User> getUsers() {
+	public List<User> getUsers() throws IOException {
 		return userService.getAll();
 	}
 

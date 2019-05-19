@@ -1,10 +1,15 @@
 package com.salvalinks.services;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -25,7 +30,7 @@ public class UserService {
 	@Autowired
 	private EmailSenderService emailSenderService;
 
-	public List<User> getAll() {
+	public List<User> getAll() throws IOException {
 		return this.userRepository.findAll();
 	}
 
@@ -120,6 +125,16 @@ public class UserService {
 
 		return user;
 	}
+	
+	private String getTitle(String url) throws IOException {
+		String href = url;
+		if(!url.substring(0, 7).equals("http://") && !url.substring(0, 7).equals("https://"))
+			href = "http://"+url;
+		
+		Document document = Jsoup.connect(href).get();
+		String retorno = document.getElementsByTag("title").get(0).text();
+		return retorno;
+	}
 
 	public Set<Link> getLinks(String email) throws Exception {
 		User user = getByEmail(email);
@@ -130,7 +145,11 @@ public class UserService {
 	public Link addLink(String email, String name, String href, String importance, String type) throws Exception {
 		User user = getByEmail(email);
 		checkIfLinkIsNotAdded(user, name);
-		Link link = new Link(name, href, importance, type);
+		String nameLink = name;
+		if (name.equals(""))
+			nameLink = getTitle(href);
+		
+		Link link = new Link(nameLink, href, importance, type);
 		user.getLinks().add(link);
 		this.userRepository.save(user);
 		return link;

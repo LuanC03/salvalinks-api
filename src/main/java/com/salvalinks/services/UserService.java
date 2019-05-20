@@ -50,12 +50,12 @@ public class UserService {
 	}
 
 	private void checkIfLinkIsNotAdded(User user, String url) throws Exception {
-		if (!user.containsLink(url))
+		if (user.containsLink(url))
 			throw new Exception("Link já adicionado!");
 	}
 
 	private void checkIfLinkIsAlreadyAdded(User user, String url) throws Exception {
-		if (user.containsLink(url))
+		if (!user.containsLink(url))
 			throw new Exception("Link não encontrado!");
 	}
 	

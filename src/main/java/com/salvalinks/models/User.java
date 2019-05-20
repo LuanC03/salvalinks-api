@@ -77,22 +77,22 @@ public class User {
 		this.links = links;
 	}
 
-	public boolean containsLink(String name) {
+	public boolean containsLink(String url) {
 		boolean retorno = false;
 		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
-			if (((Link) iterator.next()).getName().equals(name))
+			if (((Link) iterator.next()).getHref().equals(url))
 				retorno = true;
 		}
 		return retorno;
 	}
 
-	public Link removeLink(String name) {
+	public Link removeLink(String url) {
 		Link retorno = null;
 		Iterator<Link> iterator = this.getLinks().iterator();
 		while (iterator.hasNext()) {
 			Link link = (Link) iterator.next();
-			if (link.getName().equals(name))
+			if (link.getHref().equals(url))
 				retorno = link;
 		}
 		this.getLinks().remove(retorno);

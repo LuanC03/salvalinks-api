@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.salvalinks.models.Link;
 import com.salvalinks.models.User;
 import com.salvalinks.repositories.UserRepository;
-import com.salvalinks.services.EmailSenderService;
 import com.salvalinks.services.UserService;
 
 @RestController
@@ -50,7 +48,7 @@ public class UserController {
 	 * @throws Exception
 	 */
 
-	@RequestMapping(value = "/users/cadastrar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/users/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<User> cadastrar(@RequestBody User user) throws Exception {
 		return new ResponseEntity<User>(this.userService.registerUser(user), HttpStatus.OK);
 	}
@@ -64,13 +62,12 @@ public class UserController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/users/cadastrar/validar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	@RequestMapping(value = "/users/register/validate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
 	public ResponseEntity<Boolean> validar(@RequestParam String email, @RequestParam String code) throws Exception {
-
 		return new ResponseEntity<Boolean>(this.userService.validation(email, code), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/users/logar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/users/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) throws Exception {
 		return new ResponseEntity<>(userService.logar(email, password), HttpStatus.OK);
 	}
@@ -88,20 +85,18 @@ public class UserController {
 
 	@RequestMapping(value = "links/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<Link> addLink(@RequestParam String email, @RequestBody Link link) throws Exception {
-		return new ResponseEntity<>(
-				userService.addLink(email, link.getName(), link.getHref(), link.getImportance()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(userService.addLink(email, link.getName(), link.getHref(), link.getImportance()), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/remove", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	public ResponseEntity<Link> removeLink(@RequestParam String email, @RequestParam String name) throws Exception {
-		return new ResponseEntity<>(this.userService.removeLink(email, name), HttpStatus.OK);
+	public ResponseEntity<Link> removeLink(@RequestParam String email, @RequestParam String url) throws Exception {
+		return new ResponseEntity<>(this.userService.removeLink(email, url), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/rename", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-	public ResponseEntity<Link> renameLink(@RequestParam String email, @RequestParam String name,
+	public ResponseEntity<Link> renameLink(@RequestParam String email, @RequestParam String url,
 			@RequestParam String newName) throws Exception {
-		return new ResponseEntity<>(this.userService.renameLink(email, name, newName), HttpStatus.OK);
+		return new ResponseEntity<>(this.userService.renameLink(email, url, newName), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/listbyname", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

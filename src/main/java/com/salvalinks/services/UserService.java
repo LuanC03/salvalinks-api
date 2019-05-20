@@ -2,7 +2,6 @@ package com.salvalinks.services;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -11,8 +10,6 @@ import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -34,7 +31,6 @@ public class UserService {
 	private EmailSenderService emailSenderService;
 
 	public List<User> getAll() throws IOException {
-		System.out.println(getType("http://www.youtube.com"));
 		return this.userRepository.findAll();
 	}
 
@@ -46,33 +42,51 @@ public class UserService {
 		this.userRepository.deleteAll();
 	}
 
-	private boolean checkIfUserHasLinks(User user) throws Exception {
-		if (user.getLinks().isEmpty()) {
-			throw new Exception("Usuario não possui nenhum link!");
-		} else {
-			return true;
-		}
+	// Metodos de validacao e verificacao:
+	// -------------------------------------------------
+	private void checkIfUserHasLinks(User user) throws Exception {
+		if (user.getLinks().isEmpty())
+			throw new Exception("Usuário não possui nenhum link!");
 	}
 
-	private boolean checkIfLinkIsNotAdded(User user, String name) throws Exception {
-		if (!user.containsLink(name)) {
-			return true;
-		} else {
+	private void checkIfLinkIsNotAdded(User user, String url) throws Exception {
+		if (!user.containsLink(url))
 			throw new Exception("Link já adicionado!");
-		}
 	}
 
-	private boolean checkIfLinkIsAlreadyAdded(User user, String name) throws Exception {
-		if (user.containsLink(name)) {
-			return true;
-		} else {
+	private void checkIfLinkIsAlreadyAdded(User user, String url) throws Exception {
+		if (user.containsLink(url))
 			throw new Exception("Link não encontrado!");
-		}
+	}
+	
+	private void validateUser(User user, String password) throws Exception {
+		if (user == null)
+			throw new Exception("Email não cadastrado!");
+		
+		if (!user.isEnabled())
+			throw new Exception("Email ainda não confirmado!");
+		
+		if (!util.verifyPassword(user.getPassword(), password))
+			throw new Exception("Senha incorreta!");
+	}
+	
+	public Boolean validation(String email, String code) throws Exception {
+		User user = getByEmail(email);
+		if (!user.getValidationCode().equals(code))
+			throw new Exception("Código inválido!");
+
+		user.setEnabled(true);
+		this.userRepository.save(user);
+		return true;
+
 	}
 
+	// ---------------------------------------------------
+	// Metodos funcionais do sistema:
+	// ---------------------------------------------------
 	public User registerUser(User user) throws Exception {
 		if (!util.validatePassword(user.getPassword()))
-			throw new Exception("Senha muito curta, minimo 6 caracteres!");
+			throw new Exception("Senha muito curta, mínimo 6 caracteres!");
 
 		User check = this.getByEmail(user.getEmail());
 
@@ -87,24 +101,13 @@ public class UserService {
 		return newUser;
 	}
 
-	public Boolean validation(String email, String code) throws Exception {
-		User user = getByEmail(email);
-		if (!user.getValidationCode().equals(code))
-			throw new Exception("Codigo invalido");
-
-		user.setEnabled(true);
-		this.userRepository.save(user);
-		return true;
-
-	}
-
 	private void sendConfirmationEmail(User user, String code) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(user.getEmail());
 		mailMessage.setSubject("Quase lá :)");
 		mailMessage.setFrom("SalvaLinks");
 		mailMessage.setText("Olá " + user.getName()
-				+ ", para confimar seu cadastro em salvaLinks, use o link a seguir: salvalinks.herokuapp.com/confirm-account?token="
+				+ ", para confirmar seu cadastro em SalvaLinks, use o link a seguir: salvalinks.herokuapp.com/confirm-account?token="
 				+ code + "&email=" + user.getEmail());
 
 		emailSenderService.sendEmail(mailMessage);
@@ -119,20 +122,11 @@ public class UserService {
 
 	public User logar(String email, String password) throws Exception {
 		User user = this.getByEmail(email);
-		if (user == null)
-			throw new Exception("Email não cadastrado!");
-
-		if (!user.isEnabled())
-			throw new Exception("Email ainda não confirmado!");
-
-		if (!util.verifyPassword(user.getPassword(), password))
-			throw new Exception("Senha incorreta!");
-
+		validateUser(user, password);
 		return user;
 	}
-
+	
 	private String getTitle(String url) throws IOException {
-
 		String href = urlCheck(url);
 		Document document = Jsoup.connect(href).get();
 		String retorno = document.getElementsByTag("title").get(0).text();
@@ -155,7 +149,7 @@ public class UserService {
 			href = url;
 			
 		else if (url.substring(0, 8).equals("https://"))
-			href = "http://"+url.substring(8, url.length());
+			href = "http://" + url.substring(8, url.length());
 
 		else
 			href = "http://" + url;
@@ -171,12 +165,12 @@ public class UserService {
 
 	public Link addLink(String email, String name, String href, String importance) throws Exception {
 		User user = getByEmail(email);
+		checkIfLinkIsNotAdded(user, href);
 		
 		String nameLink = name;
 		if (name.equals(""))
 			nameLink = getTitle(href);
 
-		checkIfLinkIsNotAdded(user, nameLink);
 		String type = getType(href);
 		Link link = new Link(nameLink, href, importance, type);
 		user.getLinks().add(link);
@@ -184,33 +178,35 @@ public class UserService {
 		return link;
 	}
 
-	public Link removeLink(String email, String name) throws Exception {
+	public Link removeLink(String email, String url) throws Exception {
 		User user = getByEmail(email);
-		checkIfLinkIsAlreadyAdded(user, name);
-		Link retorno = user.removeLink(name);
+		checkIfLinkIsAlreadyAdded(user, url);
+		Link retorno = user.removeLink(url);
 		this.userRepository.save(user);
 		return retorno;
 
 	}
 
-	public List<Link> listByName(String email) {
+	public List<Link> listByName(String email) throws Exception {
 		User user = getByEmail(email);
+		checkIfUserHasLinks(user);
 		return user.orderByNome();
 	}
 
-	public List<Link> listByDate(String email) {
+	public List<Link> listByDate(String email) throws Exception {
 		User user = getByEmail(email);
+		checkIfUserHasLinks(user);
 		return user.orderByDate();
 	}
 
-	public Link renameLink(String email, String name, String newName) throws Exception {
+	public Link renameLink(String email, String url, String newName) throws Exception {
 		User user = getByEmail(email);
-		checkIfLinkIsAlreadyAdded(user, name);
+		checkIfLinkIsAlreadyAdded(user, url);
 		Link retorno = null;
 		Iterator<Link> iterator = user.getLinks().iterator();
 		while (iterator.hasNext()) {
 			Link link = (Link) iterator.next();
-			if (link.getName().equals(name)) {
+			if (link.getHref().equals(url)) {
 				link.setName(newName);
 				user.getLinks().add(link);
 				this.userRepository.save(user);

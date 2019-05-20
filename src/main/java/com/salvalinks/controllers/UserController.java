@@ -89,7 +89,7 @@ public class UserController {
 	@RequestMapping(value = "links/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<Link> addLink(@RequestParam String email, @RequestBody Link link) throws Exception {
 		return new ResponseEntity<>(
-				userService.addLink(email, link.getName(), link.getHref(), link.getImportance(), link.getType()),
+				userService.addLink(email, link.getName(), link.getHref(), link.getImportance()),
 				HttpStatus.OK);
 	}
 

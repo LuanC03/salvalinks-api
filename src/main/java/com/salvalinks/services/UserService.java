@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,6 +22,9 @@ import com.salvalinks.repositories.UserRepository;
 
 @Service
 public class UserService {
+	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
 
 	@Autowired
 	private UserRepository userRepository;
@@ -44,6 +49,12 @@ public class UserService {
 
 	// Metodos de validacao e verificacao:
 	// -------------------------------------------------
+
+	public boolean validateEmail(String email) {
+		Matcher matcher = pattern.matcher(email);
+		return matcher.matches();
+	}
+
 	private void checkIfUserHasLinks(User user) throws Exception {
 		if (user.getLinks().isEmpty())
 			throw new Exception("Usuário não possui nenhum link!");
@@ -58,18 +69,18 @@ public class UserService {
 		if (!user.containsLink(url))
 			throw new Exception("Link não encontrado!");
 	}
-	
+
 	private void validateUser(User user, String password) throws Exception {
 		if (user == null)
 			throw new Exception("Email não cadastrado!");
-		
+
 		if (!user.isEnabled())
 			throw new Exception("Email ainda não confirmado!");
-		
+
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");
 	}
-	
+
 	public Boolean validation(String email, String code) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
@@ -85,6 +96,9 @@ public class UserService {
 	// Metodos funcionais do sistema:
 	// ---------------------------------------------------
 	public User registerUser(User user) throws Exception {
+		if (!validateEmail(user.getEmail()))
+			throw new Exception("Formato de email inválido!");
+			
 		if (!util.validatePassword(user.getPassword()))
 			throw new Exception("Senha muito curta, mínimo 6 caracteres!");
 
@@ -125,7 +139,7 @@ public class UserService {
 		validateUser(user, password);
 		return user;
 	}
-	
+
 	private String getTitle(String url) throws IOException {
 		String href = urlCheck(url);
 		Document document = Jsoup.connect(href).get();
@@ -142,12 +156,12 @@ public class UserService {
 		String contentType = connection.getContentType();
 		return contentType;
 	}
-	
+
 	private String urlCheck(String url) {
 		String href = "";
 		if (url.substring(0, 7).equals("http://"))
 			href = url;
-			
+
 		else if (url.substring(0, 8).equals("https://"))
 			href = "http://" + url.substring(8, url.length());
 
@@ -166,7 +180,7 @@ public class UserService {
 	public Link addLink(String email, String name, String href, String importance) throws Exception {
 		User user = getByEmail(email);
 		checkIfLinkIsNotAdded(user, href);
-		
+
 		String nameLink = name;
 		if (name.equals(""))
 			nameLink = getTitle(href);

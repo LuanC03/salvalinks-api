@@ -1,8 +1,9 @@
 package com.salvalinks.controllers;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,23 +22,31 @@ import com.salvalinks.models.User;
 import com.salvalinks.repositories.UserRepository;
 import com.salvalinks.services.UserService;
 
+
+
 @RestController
 @CrossOrigin(value = "*")
 public class UserController {
-
+	
+	
 	@Autowired
 	UserService userService;
 
 	@Autowired
 	UserRepository userRepository;
 
+	
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Retorna todos os usuários cadastrados no sistema
-	 * @throws IOException 
+	 * @throws Exception 
 	 * 
 	 */
 	@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public List<User> getUsers() throws IOException {
+	public List<User> getUsers() throws Exception {
 		return userService.getAll();
 	}
 
@@ -62,13 +71,8 @@ public class UserController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/users/register/validate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-	public ResponseEntity<Boolean> validar(@RequestParam String email, @RequestParam String code) throws Exception {
-		return new ResponseEntity<Boolean>(this.userService.validation(email, code), HttpStatus.OK);
-	}
-
 	@RequestMapping(value = "/users/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) throws Exception {
+	public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) throws Exception {
 		return new ResponseEntity<>(userService.logar(email, password), HttpStatus.OK);
 	}
 
@@ -79,34 +83,34 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/links", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public Set<Link> getLinks(@RequestParam String email) throws Exception {
-		return userService.getLinks(email);
+	public Set<Link> getLinks(HttpServletRequest http) throws Exception {
+		return userService.getLinks(this.userService.checkJWT(http.getHeader("Authorization")));
 	}
 
 	@RequestMapping(value = "links/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<Link> addLink(@RequestParam String email, @RequestBody Link link) throws Exception {
-		return new ResponseEntity<>(userService.addLink(email, link.getName(), link.getHref(), link.getImportance()), HttpStatus.OK);
+	public ResponseEntity<Link> addLink(@RequestBody Link link, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(userService.addLink(this.userService.checkJWT(http.getHeader("Authorization")), link.getName(), link.getHref(), link.getImportance()), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/remove", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	public ResponseEntity<Link> removeLink(@RequestParam String email, @RequestParam String url) throws Exception {
-		return new ResponseEntity<>(this.userService.removeLink(email, url), HttpStatus.OK);
+	public ResponseEntity<Link> removeLink(@RequestParam String url, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.userService.removeLink(this.userService.checkJWT(http.getHeader("Authorization")), url), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/rename", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-	public ResponseEntity<Link> renameLink(@RequestParam String email, @RequestParam String url,
-			@RequestParam String newName) throws Exception {
-		return new ResponseEntity<>(this.userService.renameLink(email, url, newName), HttpStatus.OK);
+	public ResponseEntity<Link> renameLink(@RequestParam String url,
+			@RequestParam String newName, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.userService.renameLink(this.userService.checkJWT(http.getHeader("Authorization")), url, newName), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/listbyname", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public ResponseEntity<List<Link>> listByName(@RequestParam String email) throws Exception {
-		return new ResponseEntity<>(this.userService.listByName(email), HttpStatus.OK);
+	public ResponseEntity<List<Link>> listByName(HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.userService.listByName(this.userService.checkJWT(http.getHeader("Authorization"))), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "links/listbydate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<List<Link>> listByDate(@RequestParam String email) throws Exception {
-		return new ResponseEntity<>(this.userService.listByDate(email), HttpStatus.OK);
+	public ResponseEntity<List<Link>> listByDate(HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.userService.listByDate(this.userService.checkJWT(http.getHeader("Authorization"))), HttpStatus.OK);
 	}
 
 }

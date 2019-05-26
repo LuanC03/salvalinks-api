@@ -3,12 +3,15 @@ package com.salvalinks.services;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,11 +23,17 @@ import com.salvalinks.models.Link;
 import com.salvalinks.models.User;
 import com.salvalinks.repositories.UserRepository;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import io.jsonwebtoken.Claims;
+
 @Service
 public class UserService {
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+	public final String apikey =  "projetoessalvalinksandreadrianoaislandanieljonasfernandolucasthallysonwellington";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -47,8 +56,38 @@ public class UserService {
 		this.userRepository.deleteAll();
 	}
 
+	private Claims parseJWT(String jwt) {
+		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(apikey)).parseClaimsJws(jwt).getBody();
+		return claims;
+	}
+
+	// -------------------------------------------------
 	// Metodos de validacao e verificacao:
 	// -------------------------------------------------
+
+	public String checkJWT(String bearer) throws Exception {
+		if (bearer == null || !bearer.substring(0, 6).equals("Bearer"))
+			throw new Exception("Token não presente ou inválido");
+		
+		String token = bearer.substring(7);
+		Claims data = parseJWT(token);
+		Date instant = new Date(System.currentTimeMillis());
+		
+		if (data.getExpiration().before(instant))
+			throw new Exception("Token expirado");
+		
+		String email = data.getSubject();
+		
+		return email;
+	}
+
+	private String createJWT(User user) {
+		@SuppressWarnings("deprecation")
+		String token = Jwts.builder().setSubject(user.getEmail()).setId(user.getId()).signWith(SignatureAlgorithm.HS256,apikey)
+				.setExpiration(new Date(System.currentTimeMillis() + (60000 * 360))).compact();
+
+		return token;
+	}
 
 	public boolean validateEmail(String email) {
 		Matcher matcher = pattern.matcher(email);
@@ -98,7 +137,7 @@ public class UserService {
 	public User registerUser(User user) throws Exception {
 		if (!validateEmail(user.getEmail()))
 			throw new Exception("Formato de email inválido!");
-			
+
 		if (!util.validatePassword(user.getPassword()))
 			throw new Exception("Senha muito curta, mínimo 6 caracteres!");
 
@@ -134,10 +173,11 @@ public class UserService {
 		return code.toUpperCase();
 	}
 
-	public User logar(String email, String password) throws Exception {
+	public String logar(String email, String password) throws Exception {
 		User user = this.getByEmail(email);
 		validateUser(user, password);
-		return user;
+		String token = createJWT(user);
+		return token;
 	}
 
 	private String getTitle(String url) throws IOException {

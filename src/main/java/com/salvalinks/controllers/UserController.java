@@ -108,7 +108,7 @@ public class UserController {
 		return new ResponseEntity<>(this.userService.listByName(this.userService.checkJWT(http.getHeader("Authorization"))), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "links/listbydate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "links/listbydate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public ResponseEntity<List<Link>> listByDate(HttpServletRequest http) throws Exception {
 		return new ResponseEntity<>(this.userService.listByDate(this.userService.checkJWT(http.getHeader("Authorization"))), HttpStatus.OK);
 	}

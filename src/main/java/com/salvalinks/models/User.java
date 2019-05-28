@@ -10,7 +10,6 @@ import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.salvalinks.services.DateComparator;
 import com.salvalinks.services.NameComparator;
 
 @Document(collection = "users")
@@ -107,7 +106,7 @@ public class User {
 	
 	public List<Link> orderByDate() {
 		List<Link> list = this.toArray();
-        Collections.sort(list, new DateComparator());
+        Collections.reverse(list);
         return list;
     }
 

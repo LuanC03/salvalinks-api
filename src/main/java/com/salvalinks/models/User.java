@@ -20,8 +20,9 @@ public class User {
 	private String email;
 	private String password;
 	private Set<Link> links;
-	private boolean enabled;
+	private Set<Notification> notifications;
 	private String validationCode;
+	private boolean enabled;
 
 	public User() {
 
@@ -32,8 +33,9 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.links = new HashSet<>();
+		this.notifications = new HashSet<>();
 		this.enabled = false;
-		this.validationCode= code;
+		this.validationCode = code;
 	}
 
 	public String getId() {
@@ -74,6 +76,26 @@ public class User {
 
 	public void setLinks(Set<Link> links) {
 		this.links = links;
+	}
+	
+	public void setEnabled(boolean b) {
+		this.enabled = b;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public String getValidationCode() {
+		return validationCode;
+	}
+
+	public void setValidationCode(String validationCode) {
+		this.validationCode = validationCode;
+	}
+
+	public Set<Notification> getNotifications() {
+		return notifications;
 	}
 
 	public boolean containsLink(String url) {
@@ -120,20 +142,5 @@ public class User {
 		return "User{" + ", name='" + name + '\'' + ", Email=" + email + '}';
 	}
 
-	public void setEnabled(boolean b) {
-		this.enabled = b;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public String getValidationCode() {
-		return validationCode;
-	}
-
-	public void setValidationCode(String validationCode) {
-		this.validationCode = validationCode;
-	}
 
 }

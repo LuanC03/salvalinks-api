@@ -47,9 +47,9 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/redefine", method = RequestMethod.PUT)
-	public void redefine(@RequestParam("email") String email, @RequestParam("token") String code,
+	public void redefine(@RequestParam("email") String email, @RequestParam("token") String tpken,
 			@RequestParam("senha") String senha, @RequestParam("senha2") String senha2) throws Exception {
-		this.userService.redefinePassword(code, email, senha, senha2);
+		this.userService.redefinePassword(token, email, senha, senha2);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

@@ -119,6 +119,46 @@ public class UserService {
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");
 	}
+	
+	/////////////////////////////////////////////////////////////////////////
+	public void sendLinkToRedefine(String email) {
+		User user = this.getByEmail(email);
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setSubject("Redefinir Senha");
+		mailMessage.setFrom("SalvaLinks");
+		mailMessage.setText("Olá " + user.getName()
+				+ ", para redefinir sua senha em SalvaLinks, use o link a seguir: salvalinks.herokuapp.com/redefinePassword?token="
+				+ user.getValidationCode() + "&email=" + user.getEmail());
+
+		emailSenderService.sendEmail(mailMessage);
+	}
+	
+	public Boolean validateTokenRedefine(String email, String code) throws Exception {
+		User user = getByEmail(email);
+		if (!user.getValidationCode().equals(code))
+			throw new Exception("Código inválido!");
+		
+		return true;
+
+	}
+	
+	public Boolean redefinePassword(String code, String email, String senha, String senha2) throws Exception {
+		User user = getByEmail(email);
+		if (!user.getValidationCode().equals(code))
+			throw new Exception("Código inválido!");
+
+		else if (!senha.equals(senha2))
+			throw new Exception("As senhas não coincidem");
+
+		user.setValidationCode(this.getCode());
+		user.setPassword(this.util.encrypt(senha));
+		this.userRepository.save(user);
+		return true;
+
+	}
+	
+	/////////////////////////////////////////////////////////////////////////
 
 	public Boolean validation(String email, String code) throws Exception {
 		User user = getByEmail(email);

@@ -1,5 +1,9 @@
 # API Salva Links
 
+>##### Navegação fácil
+   >* [Pacotes principais](https://github.com/thallysonjsa/salvalinks-api/tree/master/src/main/java/com/salvalinks)
+   >* [Resources](https://github.com/thallysonjsa/salvalinks-api/tree/master/src/main/resources)
+
    ### Progresso
 
 * ##### 1ª Sprint
@@ -31,7 +35,7 @@
     
  * ##### 4ª Sprint
     - [ ] RF-13 Exportar links para Cloud
-    - [ ] RF-14 O usuário poderá ter acesso aos links tanto pelo aplicativo como via web
+    - [x] RF-14 O usuário poderá ter acesso aos links tanto pelo aplicativo como via web
 
 #### [Documentação](https://docs.google.com/document/d/10MdaEpUeQzgxRep7v_oG9NmGlCmNqujAF_s_RrpKkWk/)
 

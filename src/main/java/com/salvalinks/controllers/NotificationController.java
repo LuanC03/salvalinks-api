@@ -1,7 +1,5 @@
 package com.salvalinks.controllers;
 
-import java.time.LocalDateTime;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,13 @@ public class NotificationController {
 	}
 	
 	@RequestMapping(value = "/notification/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	public ResponseEntity<Notification> createNotfication(@RequestBody Link link, HttpServletRequest http) throws Exception {
+	public ResponseEntity<Notification> deleteNotfication(@RequestBody Link link, HttpServletRequest http) throws Exception {
 		return new ResponseEntity<>(this.notificationService.deleteNotification(this.userService.checkJWT(http.getHeader("Authorization")), link), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/notification/view", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public ResponseEntity<Notification> viewNotfication(@RequestParam String id, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.notificationService.viewNotification(this.userService.checkJWT(http.getHeader("Authorization")), id), HttpStatus.OK);
 	}
 	
 }

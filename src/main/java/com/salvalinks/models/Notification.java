@@ -15,12 +15,14 @@ public class Notification {
 	private boolean visualized = false;
 	@DateTimeFormat(iso = ISO.TIME)
 	private Date notificationTime;
+
 	
 	public Notification() {
 		
 	}
 	
-	public Notification(String linkId, Date notificationTime) {
+	public Notification(String linkId, Date notificationTime, String id) {
+		this.id = id;
 		this.linkId = linkId;
 		this.notificationTime = notificationTime;
 	}

@@ -97,6 +97,10 @@ public class User {
 	public Set<Notification> getNotifications() {
 		return notifications;
 	}
+	
+	public void setNotifications(Set<Notification> notifications) {
+		this.notifications = notifications;
+	}
 
 	public boolean containsLink(String url) {
 		boolean retorno = false;
@@ -117,6 +121,18 @@ public class User {
 				retorno = link;
 		}
 		this.getLinks().remove(retorno);
+		return retorno;
+	}
+	
+	public Notification removeNotification(String url) {
+		Notification retorno = null;
+		Iterator<Notification> iterator = this.getNotifications().iterator();
+		while (iterator.hasNext()) {
+			Notification notif = (Notification) iterator.next();
+			if (notif.getLinkId().equals(url))
+				retorno = notif;
+		}
+		this.getNotifications().remove(retorno);
 		return retorno;
 	}
 	

@@ -11,7 +11,7 @@ public class Notification {
 
 	@Id
 	private String id;
-	private String linkId;
+	private String url;
 	private boolean visualized = false;
 	@DateTimeFormat(iso = ISO.TIME)
 	private Date notificationTime;
@@ -21,9 +21,9 @@ public class Notification {
 		
 	}
 	
-	public Notification(String linkId, Date notificationTime, String id) {
+	public Notification(String id, String url, Date notificationTime) {
 		this.id = id;
-		this.linkId = linkId;
+		this.url = url;
 		this.notificationTime = notificationTime;
 	}
 	
@@ -39,12 +39,12 @@ public class Notification {
 		this.notificationTime = time;
 	}
 
-	public String getLinkId() {
-		return linkId;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setLinkId(String linkId) {
-		this.linkId = linkId;
+	public void setLinkId(String url) {
+		this.url = url;
 	}
 
 	public boolean isVisualized() {

@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.assertj.core.condition.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class NotificationService {
 		String linkId = link.getHref();
 		Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(notificationTime);
 		String id = util.encrypt(linkId);
-		Notification notif = new Notification(linkId, date, id);
+		Notification notif = new Notification(id, linkId, date);
 		user.getNotifications().add(notif);
 		this.userRepository.save(user);
 		return notif;
@@ -35,8 +34,8 @@ public class NotificationService {
 	
 	public Notification deleteNotification(String email, Link link) {
 		User user = this.userRepository.findByEmail(email);
-		String linkId = link.getHref();
-		Notification notif = user.removeNotification(linkId);
+		String id = link.getId();
+		Notification notif = user.removeNotification(id);
 		userRepository.save(user);
 		return notif;
 	}

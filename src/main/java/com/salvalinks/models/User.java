@@ -124,12 +124,12 @@ public class User {
 		return retorno;
 	}
 	
-	public Notification removeNotification(String url) {
+	public Notification removeNotification(String id) {
 		Notification retorno = null;
 		Iterator<Notification> iterator = this.getNotifications().iterator();
 		while (iterator.hasNext()) {
 			Notification notif = (Notification) iterator.next();
-			if (notif.getLinkId().equals(url))
+			if (notif.getId().equals(id))
 				retorno = notif;
 		}
 		this.getNotifications().remove(retorno);

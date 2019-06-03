@@ -116,15 +116,14 @@ public class UserService {
 		emailSenderService.sendEmail(mailMessage);
 	}
 	
-	public Boolean validateTokenRedefine(String email, String code) throws Exception {
+	public void validateTokenRedefine(String email, String code) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
 			throw new Exception("Código inválido!");
 		
-		return true;
 	}
 	
-	public Boolean redefinePassword(String code, String email, String senha, String senha2) throws Exception {
+	public void redefinePassword(String code, String email, String senha, String senha2) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
 			throw new Exception("Código inválido!");
@@ -135,7 +134,6 @@ public class UserService {
 		user.setValidationCode(this.getCode());
 		user.setPassword(this.util.encrypt(senha));
 		this.userRepository.save(user);
-		return true;
 
 	}
 	

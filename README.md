@@ -20,11 +20,11 @@
     
  * ##### 2ª Sprint
     - [ ] RF-07 Usuário clica na notificação e abre o link automaticamente
-    - [ ] RF-08 Excluir notificação de abertura do link
+    - [x] RF-08 Excluir notificação de abertura do link
     - [ ] RF-09 Soneca para as notificações
-    - [ ] RF-18 Hora default de notificações
+    - [x] RF-18 Hora default de notificações
     - [ ] RF-19 O usuário poderá personalizar as notificações
-    - [ ] RF-20 Notificação
+    - [x] RF-20 Notificação
     
  * ##### 3ª Sprint
     - [ ] RF-11 Compartilhar link

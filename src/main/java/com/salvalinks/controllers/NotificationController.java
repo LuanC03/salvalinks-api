@@ -1,5 +1,7 @@
 package com.salvalinks.controllers;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,8 @@ public class NotificationController {
 	}
 	
 	@RequestMapping(value = "/notification/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	public ResponseEntity<Notification> deleteNotfication(@RequestBody Link link, HttpServletRequest http) throws Exception {
-		return new ResponseEntity<>(this.notificationService.deleteNotification(this.userService.checkJWT(http.getHeader("Authorization")), link), HttpStatus.OK);
+	public ResponseEntity<Notification> deleteNotfication(@RequestParam String id, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.notificationService.deleteNotification(this.userService.checkJWT(http.getHeader("Authorization")), id), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/notification/view", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
@@ -43,4 +45,8 @@ public class NotificationController {
 		return new ResponseEntity<>(this.notificationService.viewNotification(this.userService.checkJWT(http.getHeader("Authorization")), id), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/notification/edit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public ResponseEntity<Notification> editNotfication(@RequestParam String id, @RequestParam Date notificationTime, HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.notificationService.setNewNotificationTime(this.userService.checkJWT(http.getHeader("Authorization")), id, notificationTime), HttpStatus.OK);
+	}
 }

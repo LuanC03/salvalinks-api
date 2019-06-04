@@ -21,6 +21,7 @@ public class User {
 	private String password;
 	private Set<Link> links;
 	private Set<Notification> notifications;
+	private Set<Group> groups;
 	private String validationCode;
 	private boolean enabled;
 
@@ -101,6 +102,10 @@ public class User {
 	public void setNotifications(Set<Notification> notifications) {
 		this.notifications = notifications;
 	}
+	
+	public Set<Group> getGroups() {
+		return groups;
+	}
 
 	public boolean containsLink(String url) {
 		boolean retorno = false;
@@ -124,6 +129,7 @@ public class User {
 		return retorno;
 	}
 	
+
 	public Notification removeNotification(String id) {
 		Notification retorno = null;
 		Iterator<Notification> iterator = this.getNotifications().iterator();

@@ -47,7 +47,7 @@ public class Link {
 	public String getGroup() {
 		return group;
 	}
-	
+
 	public String getHref() {
 		return href;
 	}

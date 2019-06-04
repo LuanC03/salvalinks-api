@@ -10,38 +10,36 @@ import org.springframework.stereotype.Service;
 import com.salvalinks.models.Link;
 import com.salvalinks.models.Notification;
 import com.salvalinks.models.User;
-import com.salvalinks.repositories.UserRepository;
-
+import com.salvalinks.services.UserService;
 @Service
 public class NotificationService {
 
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 	
 	@Autowired
 	private Util util;
 	
 	public Notification createNotification(String email, Link link, String notificationTime) throws Exception {
-		User user = this.userRepository.findByEmail(email);
+		User user = this.userService.getByEmail(email);
 		String linkId = link.getHref();
 		Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(notificationTime);
 		String id = util.encrypt(linkId);
 		Notification notif = new Notification(id, linkId, date);
 		user.getNotifications().add(notif);
-		this.userRepository.save(user);
+		this.userService.saveUser(user);
 		return notif;
 	}
 	
-	public Notification deleteNotification(String email, Link link) {
-		User user = this.userRepository.findByEmail(email);
-		String id = link.getId();
+	public Notification deleteNotification(String email, String id) {
+		User user = this.userService.getByEmail(email);
 		Notification notif = user.removeNotification(id);
-		userRepository.save(user);
+		this.userService.saveUser(user);
 		return notif;
 	}
 	
 	private Notification getById(String email, String id) {
-		User user = this.userRepository.findByEmail(email);
+		User user = this.userService.getByEmail(email);
 		Notification retorno = null;
 		Iterator<Notification> iterator = user.getNotifications().iterator();
 		while (iterator.hasNext()) {
@@ -53,13 +51,22 @@ public class NotificationService {
 	}
 
 	public Notification viewNotification(String email, String id) {
-		User user = this.userRepository.findByEmail(email);
+		User user = this.userService.getByEmail(email);
 		Notification notif = this.getById(email, id);
 		Notification retorno = notif;
 		notif.setVisualized(true);
 		user.getNotifications().add(notif);
-		this.userRepository.save(user);
+		this.userService.saveUser(user);
 		return retorno;
+	}
+	
+	public Notification setNewNotificationTime(String email, String id, Date notificationTime) {
+		User user = this.userService.getByEmail(email);
+		Notification notif = this.getById(email, id);
+		notif.setTime(notificationTime);
+		user.getNotifications().add(notif);
+		this.userService.saveUser(user);
+		return notif;
 	}
 
 	

@@ -20,12 +20,14 @@ public class Link {
 		
 	}
 	
-	public Link(String name, String href, String importance, String type) {
+	public Link(String name, String href, String importance, String type, String id) {
+		this.id = id;
 		this.name = name;
 		this.href = href;
 		this.data = new Date().toString();
 		this.importance = importance;
 		this.type = type;
+		this.group = "none";
 	}
 
 	public String getName() {
@@ -71,6 +73,11 @@ public class Link {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
 
 	@Override
 	public String toString() {

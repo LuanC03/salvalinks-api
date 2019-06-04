@@ -1,5 +1,6 @@
 package com.salvalinks.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,12 @@ public class Group {
 	private String name;
 	private Set<String> links;
 	
+	public Group(String id, String name) {
+		this.id = id;
+		this.name = name;
+		this.links = new HashSet<>();
+	}
+
 	public String getId() {
 		return id;
 	}

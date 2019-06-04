@@ -21,6 +21,9 @@ public class LinkService {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	Util util;
+	
 	private void checkIfUserHasLinks(User user) throws Exception {
 		if (user.getLinks().isEmpty())
 			throw new Exception("Usuário não possui nenhum link!");
@@ -34,6 +37,34 @@ public class LinkService {
 	private void checkIfLinkIsAlreadyAdded(User user, String url) throws Exception {
 		if (!user.containsLink(url))
 			throw new Exception("Link não encontrado!");
+	}
+	
+	public Link getLinkById(String email, String id) {
+		User user = this.userService.getByEmail(email);
+		Link retorno = null;
+		Set<Link> set = user.getLinks();
+		Iterator<Link> iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Link link = (Link) iterator.next();
+			if (link.getId().equals(id))
+				retorno = link;
+		}
+		
+		return retorno;
+	}
+	
+	public Link getLinkByUrl(String email, String url) {
+		User user = this.userService.getByEmail(email);
+		Link retorno = null;
+		Set<Link> set = user.getLinks();
+		Iterator<Link> iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Link link = (Link) iterator.next();
+			if (link.getHref().equals(url))
+				retorno = link;
+		}
+		
+		return retorno;
 	}
 	
 	public Set<Link> getLinks(String email) throws Exception {
@@ -51,7 +82,8 @@ public class LinkService {
 			nameLink = getTitle(href);
 
 		String type = getType(href);
-		Link link = new Link(nameLink, href, importance, type);
+		String id = this.util.encrypt(href);
+		Link link = new Link(nameLink, href, importance, type, id);
 		user.getLinks().add(link);
 		this.userService.saveUser(user);
 		return link;
@@ -60,7 +92,8 @@ public class LinkService {
 	public Link removeLink(String email, String url) throws Exception {
 		User user = this.userService.getByEmail(email);
 		checkIfLinkIsAlreadyAdded(user, url);
-		Link retorno = user.removeLink(url);
+		Link idLink = this.getLinkByUrl(email, url);
+		Link retorno = user.removeLink(idLink.getId());
 		this.userService.saveUser(user);
 		return retorno;
 

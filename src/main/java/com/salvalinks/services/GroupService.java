@@ -33,6 +33,9 @@ public class GroupService {
 	
 	public Group addGroup(String email, String name) throws Exception {
 		User user = this.userService.getByEmail(email);
+		if(user.getGroups() == null)
+			user.setGroups(new HashSet<>());
+		
 		if(this.groupExists(email, name))
 			throw new Exception("Já existe grupo com esse nome!");
 		
@@ -47,7 +50,7 @@ public class GroupService {
 		User user = this.userService.getByEmail(email);
 		Link link = user.getLinkById(idLink);
 		Group group = user.containsGroup(nameGroup);
-		group.getLinks().add(idLink); // id do link no grupo
+		group.getLinks().add(idLink); // id do link no grupos
 		link.setGroup(nameGroup); // seta atrr group do link
 		user.getGroups().add(group); // add o grupo atualizado PUT
 		user.getLinks().add(link); // add link atualizado PUT
@@ -76,5 +79,23 @@ public class GroupService {
 		}
 		return retorno;
 	}
+	
+//	public void deleteGroup(String email, String name) {
+//		User user = this.userService.getByEmail(email);
+//		Group group = user.containsGroup(name);
+//		
+//		Set<Link> retorno = new HashSet<>();
+//		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
+//		while (iterator.hasNext()) {
+//			Link link = (Link) iterator.next();
+//			Link linkadd = link;
+//			linkadd.setGroup("none");
+//			retorno.add(linkadd);
+//		}
+//		
+//		user.getLinks().addAll(retorno);
+//		user.getGroups().remove(group);
+//		this.userService.saveUser(user);
+//	}
 
 }

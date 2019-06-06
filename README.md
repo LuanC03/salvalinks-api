@@ -3,6 +3,7 @@
 >##### Navegação fácil
    >* [Pacotes principais](https://github.com/thallysonjsa/salvalinks-api/tree/master/src/main/java/com/salvalinks)
    >* [Resources](https://github.com/thallysonjsa/salvalinks-api/tree/master/src/main/resources)
+   >* [Testes](https://github.com/thallysonjsa/salvalinks-api/tree/master/src/test/java/com/salvalinks/tests)
 
    ### Progresso
 
@@ -29,9 +30,9 @@
  * ##### 3ª Sprint
     - [ ] RF-11 Compartilhar link
     - [ ] RF-12 Importar links
-    - [ ] RF-15 Criação de grupos de links
+    - [x] RF-15 Criação de grupos de links
     - [ ] RF-16 Compartilhamento de grupos de links
-    - [ ] RF-23 Mover links
+    - [x] RF-23 Mover links
     
  * ##### 4ª Sprint
     - [ ] RF-13 Exportar links para Cloud

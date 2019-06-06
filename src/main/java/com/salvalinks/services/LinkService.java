@@ -128,14 +128,14 @@ public class LinkService {
 		return retorno;
 	}
 	
-	private String getTitle(String url) throws IOException {
+	public String getTitle(String url) throws IOException {
 		String href = urlCheck(url);
 		Document document = Jsoup.connect(href).get();
 		String retorno = document.getElementsByTag("title").get(0).text();
 		return retorno;
 	}
 
-	private String getType(String href) throws IOException {
+	public String getType(String href) throws IOException {
 		String hrefChecked = urlCheck(href);
 		URL url = new URL(hrefChecked);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -23,7 +23,7 @@ public class GroupService {
 	@Autowired
 	Util util;
 	
-	private Boolean groupExists(String email, String name) {
+	public Boolean groupExists(String email, String name) {
 		User user = this.userService.getByEmail(email);
 		Boolean retorno = false;
 		if(user.containsGroup(name) != null)

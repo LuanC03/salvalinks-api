@@ -19,7 +19,7 @@ import com.salvalinks.services.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class linkServiceTest {
+public class LinkServiceTest {
 
 	@Autowired
 	private LinkService linkService;

@@ -80,22 +80,19 @@ public class GroupService {
 		return retorno;
 	}
 	
-//	public void deleteGroup(String email, String name) {
-//		User user = this.userService.getByEmail(email);
-//		Group group = user.containsGroup(name);
-//		
-//		Set<Link> retorno = new HashSet<>();
-//		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
-//		while (iterator.hasNext()) {
-//			Link link = (Link) iterator.next();
-//			Link linkadd = link;
-//			linkadd.setGroup("none");
-//			retorno.add(linkadd);
-//		}
-//		
-//		user.getLinks().addAll(retorno);
-//		user.getGroups().remove(group);
-//		this.userService.saveUser(user);
-//	}
+	public void deleteGroup(String email, String name) {
+		User user = this.userService.getByEmail(email);
+		Group group = user.containsGroup(name);
+		
+		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
+		while (iterator.hasNext()) {
+			Link link = (Link) iterator.next();
+			Link linkadd = link;
+			linkadd.setGroup("none");
+		}
+		user.getGroups().remove(group);
+		this.userService.saveUser(user);
+		
+	}
 
 }

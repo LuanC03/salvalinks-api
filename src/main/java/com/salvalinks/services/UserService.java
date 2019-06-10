@@ -102,7 +102,6 @@ public class UserService {
 			throw new Exception("Senha incorreta!");
 	}
 	
-	/////////////////////////////////////////////////////////////////////////
 	public void sendLinkToRedefine(String email) {
 		User user = this.getByEmail(email);
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -123,21 +122,19 @@ public class UserService {
 		
 	}
 	
-	public void redefinePassword(String code, String email, String senha, String senha2) throws Exception {
+	public void redefinePassword(String code, String email, String password, String newPassword) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
 			throw new Exception("Código inválido!");
 
-		else if (!senha.equals(senha2))
+		else if (!password.equals(newPassword))
 			throw new Exception("As senhas não coincidem");
 
 		user.setValidationCode(this.getCode());
-		user.setPassword(this.util.encrypt(senha));
-		this.userRepository.save(user);
+		user.setPassword(this.util.encrypt(password));
+		this.saveUser(user);
 
 	}
-	
-	/////////////////////////////////////////////////////////////////////////
 
 	public Boolean validation(String email, String code) throws Exception {
 		User user = getByEmail(email);
@@ -145,7 +142,7 @@ public class UserService {
 			throw new Exception("Código inválido!");
 
 		user.setEnabled(true);
-		this.userRepository.save(user);
+		this.saveUser(user);
 		return true;
 
 	}
@@ -168,7 +165,7 @@ public class UserService {
 		String code = getCode();
 		String encryptedPassword = util.encrypt(user.getPassword());
 		User newUser = new User(user.getName(), user.getEmail(), encryptedPassword, code);
-		this.userRepository.save(newUser);
+		this.saveUser(user);
 		sendConfirmationEmail(newUser, code);
 		return newUser;
 	}
@@ -197,6 +194,12 @@ public class UserService {
 		validateUser(user, password);
 		String token = createJWT(user);
 		return token;
+	}
+	
+	public void renameUser(String email, String newName) {
+		User user = this.getByEmail(email);
+		user.setName(newName);
+		this.saveUser(user);
 	}
 
 }

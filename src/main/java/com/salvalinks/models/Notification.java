@@ -54,4 +54,33 @@ public class Notification {
 	public void setVisualized(boolean visualized) {
 		this.visualized = visualized;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Notification other = (Notification) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (notificationTime == null) {
+			if (other.notificationTime != null)
+				return false;
+		} else if (!notificationTime.equals(other.notificationTime))
+			return false;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
+		return true;
+	}
+	
+	
 }

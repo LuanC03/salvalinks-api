@@ -83,16 +83,27 @@ public class GroupService {
 	public void deleteGroup(String email, String name) {
 		User user = this.userService.getByEmail(email);
 		Group group = user.containsGroup(name);
-		
 		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
 		while (iterator.hasNext()) {
 			Link link = (Link) iterator.next();
-			Link linkadd = link;
-			linkadd.setGroup("none");
+			user.removeFromGroup(name, link.getId());
 		}
 		user.getGroups().remove(group);
 		this.userService.saveUser(user);
-		
 	}
+	
+//	public String renameGroup(String email, String name, String newName) {
+//		User user = this.userService.getByEmail(email);
+//		Group group = user.containsGroup(name);
+//		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
+//		while (iterator.hasNext()) {
+//			Link link = (Link) iterator.next();
+//			this.addLinkToGroup(email, nameGroup, idLink)
+//		}
+//		user.getGroups().remove(group);
+//		group.setName(newName);
+//		user.getGroups().add(group);
+//		
+//	}
 
 }

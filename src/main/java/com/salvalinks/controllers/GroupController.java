@@ -55,12 +55,12 @@ public class GroupController {
 				.getLinksFromGroup(this.userService.checkJWT(http.getHeader("Authorization")), name)), HttpStatus.OK);
 	}
 	
-//	@RequestMapping(value = "/group/delete", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-//	public ResponseEntity<HttpStatus> deleteGroup(@RequestParam String name, HttpServletRequest http)
-//			throws Exception {
-//		this.groupService
-//		.deleteGroup(this.userService.checkJWT(http.getHeader("Authorization")), name);
-//		return new ResponseEntity<>( HttpStatus.OK);
-//	}
+	@RequestMapping(value = "/group/delete", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public ResponseEntity<HttpStatus> deleteGroup(@RequestParam String name, HttpServletRequest http)
+			throws Exception {
+		this.groupService
+		.deleteGroup(this.userService.checkJWT(http.getHeader("Authorization")), name);
+		return new ResponseEntity<>( HttpStatus.OK);
+	}
 
 }

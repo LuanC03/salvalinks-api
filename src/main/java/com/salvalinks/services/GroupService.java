@@ -119,7 +119,7 @@ public class GroupService {
 			document.open();
 			
 			// LOGO // FALTA COLOCAR IMAGEM ON EM ALGUM LINK
-			String imageFile = "link"; 
+			String imageFile = "https://i.ibb.co/z2JGP6d/IMG-20190612-WA0040.jpg"; 
 			Image data = Image.getInstance(imageFile);
 			data.scalePercent(30, 30);
 			data.setAlignment(Element.ALIGN_CENTER);

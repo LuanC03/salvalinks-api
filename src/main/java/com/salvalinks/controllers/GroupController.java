@@ -3,6 +3,7 @@ package com.salvalinks.controllers;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.itextpdf.text.Document;
 import com.salvalinks.models.Group;
 import com.salvalinks.models.Link;
 import com.salvalinks.services.GroupService;
@@ -61,6 +63,12 @@ public class GroupController {
 		this.groupService
 		.deleteGroup(this.userService.checkJWT(http.getHeader("Authorization")), name);
 		return new ResponseEntity<>( HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/group/pdf", produces = MediaType.APPLICATION_PDF_VALUE, method = RequestMethod.GET)
+	public ResponseEntity<HttpServletResponse> getPDF(@RequestParam String name, HttpServletRequest http, HttpServletResponse response)
+			throws Exception {
+		return new ResponseEntity<>(this.groupService.shareLinks(this.userService.checkJWT(http.getHeader("Authorization")), name, response),HttpStatus.OK);
 	}
 
 }

@@ -85,7 +85,7 @@ public class UserController {
 
 	@RequestMapping(value = "/users/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) throws Exception {
-		return new ResponseEntity<>(userService.logar(email, password), HttpStatus.OK);
+		return new ResponseEntity<>(this.userService.logar(email, password), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/users/delete", method = RequestMethod.DELETE)

@@ -164,8 +164,8 @@ public class UserService {
 
 		String code = getCode();
 		String encryptedPassword = util.encrypt(user.getPassword());
-		User newUser = new User(user.getName(), user.getEmail(), encryptedPassword, code);
-		this.saveUser(user);
+		User newUser = new User(user.getName(), user.getEmail().toLowerCase(), encryptedPassword, code);
+		this.saveUser(newUser);
 		sendConfirmationEmail(newUser, code);
 		return newUser;
 	}
@@ -190,9 +190,10 @@ public class UserService {
 	}
 
 	public String logar(String email, String password) throws Exception {
-		User user = this.getByEmail(email);
+		User user = this.getByEmail(email.toLowerCase());
 		validateUser(user, password);
 		String token = createJWT(user);
+		System.out.println(token);
 		return token;
 	}
 	

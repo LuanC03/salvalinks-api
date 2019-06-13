@@ -20,10 +20,10 @@ public class LinkService {
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	Util util;
-	
+
 	private void checkIfUserHasLinks(User user) throws Exception {
 		if (user.getLinks().isEmpty())
 			throw new Exception("Usuário não possui nenhum link!");
@@ -38,7 +38,7 @@ public class LinkService {
 		if (!user.containsLink(url))
 			throw new Exception("Link não encontrado!");
 	}
-	
+
 	public Link getLinkById(String email, String id) {
 		User user = this.userService.getByEmail(email);
 		Link retorno = null;
@@ -49,10 +49,10 @@ public class LinkService {
 			if (link.getId().equals(id))
 				retorno = link;
 		}
-		
+
 		return retorno;
 	}
-	
+
 	public Link getLinkByUrl(String email, String url) {
 		User user = this.userService.getByEmail(email);
 		Link retorno = null;
@@ -63,10 +63,10 @@ public class LinkService {
 			if (link.getHref().equals(url))
 				retorno = link;
 		}
-		
+
 		return retorno;
 	}
-	
+
 	public Set<Link> getLinks(String email) throws Exception {
 		User user = this.userService.getByEmail(email);
 		checkIfUserHasLinks(user);
@@ -127,24 +127,37 @@ public class LinkService {
 		}
 		return retorno;
 	}
-	
+
 	public String getTitle(String url) throws IOException {
-		String href = urlCheck(url);
-		Document document = Jsoup.connect(href).get();
-		String retorno = document.getElementsByTag("title").get(0).text();
+		String retorno = null;
+		if (url.endsWith("pdf"))
+			retorno = url;
+
+		else {
+			String href = urlCheck(url);
+			Document document = Jsoup.connect(href).get();
+			retorno = document.getElementsByTag("title").get(0).text();
+		}
 		return retorno;
 	}
 
 	public String getType(String href) throws IOException {
-		String hrefChecked = urlCheck(href);
-		URL url = new URL(hrefChecked);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("HEAD");
-		connection.connect();
-		String contentType = connection.getContentType();
+		String contentType = null;
+		System.out.println(href);
+		if (href.endsWith("pdf"))
+			contentType = "pdf";
+
+		else {
+			String hrefChecked = urlCheck(href);
+			URL url = new URL(hrefChecked);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("HEAD");
+			connection.connect();
+			contentType = connection.getContentType();
+		}
 		return contentType;
 	}
-	
+
 	private String urlCheck(String url) {
 		String href = "";
 		if (url.substring(0, 7).equals("http://"))
@@ -158,5 +171,5 @@ public class LinkService {
 
 		return href;
 	}
-	
+
 }

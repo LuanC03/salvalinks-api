@@ -50,7 +50,9 @@ public class GroupService {
 		User user = this.userService.getByEmail(email);
 		if (user.getGroups() == null)
 			user.setGroups(new HashSet<>());
-
+		
+		this.userService.saveUser(user);
+		
 		if (this.groupExists(email, name))
 			throw new Exception("Já existe grupo com esse nome!");
 
@@ -118,7 +120,7 @@ public class GroupService {
 			//PdfWriter.getInstance(document, new FileOutputStream("salvalinks.herokuapp.com/"+user.getValidationCode()+"/pdf_Test.pdf"));
 			document.open();
 			
-			// LOGO // FALTA COLOCAR IMAGEM ON EM ALGUM LINK
+			// LOGO 
 			String imageFile = "https://i.ibb.co/z2JGP6d/IMG-20190612-WA0040.jpg"; 
 			Image data = Image.getInstance(imageFile);
 			data.scalePercent(30, 30);

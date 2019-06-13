@@ -31,7 +31,7 @@
     - [ ] RF-11 Compartilhar link
     - [ ] RF-12 Importar links
     - [x] RF-15 Criação de grupos de links
-    - [ ] RF-16 Compartilhamento de grupos de links
+    - [x] RF-16 Compartilhamento de grupos de links
     - [x] RF-23 Mover links
     
  * ##### 4ª Sprint

@@ -71,7 +71,7 @@ public class LinkService {
 		User user = this.userService.getByEmail(email);
 		Set<Link> retorno = null;
 		if (user.getLinks().isEmpty())
-			retorno = new Hashset<>();
+			retorno = new HashSet<>();
 		else
 			retorno = user.getLinks();
 		return retorno;

@@ -3,10 +3,18 @@ package com.salvalinks.services;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +34,7 @@ public class UserService {
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
-	public final String apikey =  "projetoessalvalinksandreadrianoaislandanieljonasfernandolucasthallysonwellington";
+	public final String apikey = "projetoessalvalinksandreadrianoaislandanieljonasfernandolucasthallysonwellington";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -44,7 +52,7 @@ public class UserService {
 	public User getByEmail(String email) {
 		return this.userRepository.findByEmail(email);
 	}
-	
+
 	public User saveUser(User user) {
 		return this.userRepository.save(user);
 	}
@@ -54,7 +62,8 @@ public class UserService {
 	}
 
 	private Claims parseJWT(String jwt) {
-		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(apikey)).parseClaimsJws(jwt).getBody();
+		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(apikey)).parseClaimsJws(jwt)
+				.getBody();
 		return claims;
 	}
 
@@ -65,22 +74,23 @@ public class UserService {
 	public String checkJWT(String bearer) throws Exception {
 		if (bearer == null || !bearer.substring(0, 6).equals("Bearer"))
 			throw new Exception("Token não presente ou inválido");
-		
+
 		String token = bearer.substring(7);
 		Claims data = parseJWT(token);
 		Date instant = new Date(System.currentTimeMillis());
-		
+
 		if (data.getExpiration().before(instant))
 			throw new Exception("Token expirado");
-		
+
 		String email = data.getSubject();
-		
+
 		return email;
 	}
 
 	private String createJWT(User user) {
 		@SuppressWarnings("deprecation")
-		String token = Jwts.builder().setSubject(user.getEmail()).setId(user.getId()).signWith(SignatureAlgorithm.HS256,apikey)
+		String token = Jwts.builder().setSubject(user.getEmail()).setId(user.getId())
+				.signWith(SignatureAlgorithm.HS256, apikey)
 				.setExpiration(new Date(System.currentTimeMillis() + (60000 * 360))).compact();
 
 		return token;
@@ -101,7 +111,7 @@ public class UserService {
 		if (!util.verifyPassword(user.getPassword(), password))
 			throw new Exception("Senha incorreta!");
 	}
-	
+
 	public void sendLinkToRedefine(String email) {
 		User user = this.getByEmail(email);
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -114,14 +124,14 @@ public class UserService {
 
 		emailSenderService.sendEmail(mailMessage);
 	}
-	
+
 	public void validateTokenRedefine(String email, String code) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
 			throw new Exception("Código inválido!");
-		
+
 	}
-	
+
 	public void redefinePassword(String code, String email, String password, String newPassword) throws Exception {
 		User user = getByEmail(email);
 		if (!user.getValidationCode().equals(code))
@@ -170,16 +180,51 @@ public class UserService {
 		return newUser;
 	}
 
-	private void sendConfirmationEmail(User user, String code) {
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(user.getEmail());
-		mailMessage.setSubject("Quase lá :)");
-		mailMessage.setFrom("SalvaLinks");
-		mailMessage.setText("Olá " + user.getName()
-				+ ", para confirmar seu cadastro em SalvaLinks, use o link a seguir: salvalinks.herokuapp.com/confirm-account?token="
-				+ code + "&email=" + user.getEmail());
+	private Session prepare() {
+		Properties props = new Properties();
+		props.setProperty("mail.transport.protocol", "smtp");
+		props.setProperty("mail.host", "smtp.gmail.com");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
+		props.put("mail.debug", "true");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.socketFactory.fallback", "false");
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("noreply.salvalinks@gmail.com", "salvalinks123");
+			}
+		});
+		
+		return session;
+	}
+	
+	private void sendConfirmationEmail(User user, String code) throws MessagingException {
+		Session session = this.prepare();
+		MimeMessage message = new MimeMessage(session);
+		message.setFrom(new InternetAddress("noreply.salvalinks@gmail.com"));
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+		message.setSubject("Quase lá :)");
+		message.setContent("<meta charset=\"UTF-8\"><center>\n"
+				+ "			<img id=\"logo\" src=\"https://i.ibb.co/z2JGP6d/IMG-20190612-WA0040.jpg width=\"150\" height=\"150\">\n"
+				+ "		</center>"
+				+ "<h2>Para confirmar seu cadastro, clique a seguir:</h2> <a href=\"salvalinks.herokuapp.com/confirm-account?token="
+				+ code + "&email=" + user.getEmail()
+				+ "\" display\"center\">CONFIRM ACCOUNT</a>",
+				"text/html");
 
-		emailSenderService.sendEmail(mailMessage);
+		Transport.send(message);
+
+		// SimpleMailMessage mailMessage = new SimpleMailMessage();
+		// mailMessage.setTo(user.getEmail());
+		// mailMessage.setSubject("Quase lá :)");
+		// mailMessage.setFrom("SalvaLinks");
+		// mailMessage.setText("Olá " + user.getName()
+		// + ", para confirmar seu cadastro em SalvaLinks, use o link a seguir:
+		// salvalinks.herokuapp.com/confirm-account?token="
+		// + code + "&email=" + user.getEmail());
+		//
+		// emailSenderService.sendEmail(mailMessage);
 	}
 
 	private String getCode() {
@@ -195,7 +240,7 @@ public class UserService {
 		String token = createJWT(user);
 		return token;
 	}
-	
+
 	public void renameUser(String email, String newName) {
 		User user = this.getByEmail(email);
 		user.setName(newName);

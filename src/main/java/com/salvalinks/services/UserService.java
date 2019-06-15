@@ -193,7 +193,6 @@ public class UserService {
 		User user = this.getByEmail(email.toLowerCase());
 		validateUser(user, password);
 		String token = createJWT(user);
-		System.out.println(token);
 		return token;
 	}
 	

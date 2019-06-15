@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.itextpdf.text.Document;
 import com.salvalinks.models.Group;
 import com.salvalinks.models.Link;
 import com.salvalinks.services.GroupService;
@@ -69,6 +68,13 @@ public class GroupController {
 	public ResponseEntity<HttpServletResponse> getPDF(@RequestParam String name, HttpServletRequest http, HttpServletResponse response)
 			throws Exception {
 		return new ResponseEntity<>(this.groupService.shareLinks(this.userService.checkJWT(http.getHeader("Authorization")), name, response),HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/group/rename", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+	public ResponseEntity<String> renameGroup(@RequestParam String name, @RequestParam String newName, HttpServletRequest http)
+			throws Exception {
+		return new ResponseEntity<>(this.groupService
+				.renameGroup(this.userService.checkJWT(http.getHeader("Authorization")), name, newName),HttpStatus.OK);
 	}
 
 }

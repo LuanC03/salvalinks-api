@@ -1,6 +1,5 @@
 package com.salvalinks.services;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,7 +8,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.Document;
@@ -31,7 +29,7 @@ public class GroupService {
 
 	@Autowired
 	LinkService linkService;
-	
+
 	@Autowired
 	EmailSenderService emailSenderService;
 
@@ -50,9 +48,9 @@ public class GroupService {
 		User user = this.userService.getByEmail(email);
 		if (user.getGroups() == null)
 			user.setGroups(new HashSet<>());
-		
+
 		this.userService.saveUser(user);
-		
+
 		if (this.groupExists(email, name))
 			throw new Exception("Já existe grupo com esse nome!");
 
@@ -110,40 +108,40 @@ public class GroupService {
 	}
 
 	public HttpServletResponse shareLinks(String email, String name, HttpServletResponse response) {
-		User user = this.userService.getByEmail(email);
 		Document document = new Document();
 		Set<Link> links = this.getLinksFromGroup(email, name);
 		response.setContentType("application/pdf");
 
-		try { 
+		try {
 			PdfWriter.getInstance(document, response.getOutputStream());
-			//PdfWriter.getInstance(document, new FileOutputStream("salvalinks.herokuapp.com/"+user.getValidationCode()+"/pdf_Test.pdf"));
+			// PdfWriter.getInstance(document, new
+			// FileOutputStream("salvalinks.herokuapp.com/"+user.getValidationCode()+"/pdf_Test.pdf"));
 			document.open();
-			
-			// LOGO 
-			String imageFile = "https://i.ibb.co/z2JGP6d/IMG-20190612-WA0040.jpg"; 
+
+			// LOGO
+			String imageFile = "https://i.ibb.co/z2JGP6d/IMG-20190612-WA0040.jpg";
 			Image data = Image.getInstance(imageFile);
 			data.scalePercent(30, 30);
 			data.setAlignment(Element.ALIGN_CENTER);
 			document.add(data);
 			// TITULO
-			document.add(new Paragraph("     "+ name, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)));
+			document.add(new Paragraph("     " + name, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)));
 			document.add(new Paragraph(" "));
-			//RODAPE
+			// RODAPE
 			Paragraph rodape = new Paragraph("© Copyright 2019, SalvaLinks");
 			rodape.setAlignment(Element.ALIGN_BOTTOM);
 			rodape.setAlignment(Element.ALIGN_CENTER);
-			
-			Iterator iterator = links.iterator();
+
+			Iterator<Link> iterator = links.iterator();
 			while (iterator.hasNext()) {
 				Link link = (Link) iterator.next();
 				document.add(new Paragraph("* " + link.getName()));
 				document.add(new Paragraph("  " + link.getHref(), FontFactory.getFont(FontFactory.COURIER, 12)));
 			}
-			
+
 			document.add(new Paragraph(" "));
 			document.add(rodape);
-			
+
 		} catch (DocumentException de) {
 			System.err.println(de.getMessage());
 		} catch (IOException ioe) {
@@ -151,22 +149,24 @@ public class GroupService {
 		} finally {
 			document.close();
 		}
-	
+
 		return response;
 	}
 
-	// public String renameGroup(String email, String name, String newName) {
-	// User user = this.userService.getByEmail(email);
-	// Group group = user.containsGroup(name);
-	// Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
-	// while (iterator.hasNext()) {
-	// Link link = (Link) iterator.next();
-	// this.addLinkToGroup(email, nameGroup, idLink)
-	// }
-	// user.getGroups().remove(group);
-	// group.setName(newName);
-	// user.getGroups().add(group);
-	//
-	// }
+	public String renameGroup(String email, String name, String newName) throws Exception {
+		User user = this.userService.getByEmail(email);
+		Group group = user.containsGroup(name);
+		Iterator<Link> iterator = this.getLinksFromGroup(email, name).iterator();
+		this.deleteGroup(email, name);
+		group.setName(newName);
+		user.getGroups().add(group);
+		this.userService.saveUser(user);
+		while (iterator.hasNext()) {
+			Link link = (Link) iterator.next();
+			this.addLinkToGroup(email, newName, link.getId());
+		}
+		
+		return newName;
+	}
 
 }

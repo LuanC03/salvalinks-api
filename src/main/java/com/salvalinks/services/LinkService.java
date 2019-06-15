@@ -26,7 +26,7 @@ public class LinkService {
 
 	private void checkIfUserHasLinks(User user) throws Exception {
 		if (user.getLinks().isEmpty())
-			throw new Exception("Usuário não possui nenhum link!");
+			throw new Exception("Usuário não possui links");
 	}
 
 	private void checkIfLinkIsNotAdded(User user, String url) throws Exception {
@@ -69,8 +69,12 @@ public class LinkService {
 
 	public Set<Link> getLinks(String email) throws Exception {
 		User user = this.userService.getByEmail(email);
-		checkIfUserHasLinks(user);
-		return user.getLinks();
+		Set<Link> retorno = null;
+		if (user.getLinks().isEmpty())
+			retorno = new Hashset<>();
+		else
+			retorno = user.getLinks();
+		return retorno;
 	}
 
 	public Link addLink(String email, String name, String href, String importance) throws Exception {

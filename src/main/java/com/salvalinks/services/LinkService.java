@@ -69,12 +69,7 @@ public class LinkService {
 
 	public Set<Link> getLinks(String email) throws Exception {
 		User user = this.userService.getByEmail(email);
-		Set<Link> retorno = null;
-		if (user.getLinks().isEmpty())
-			retorno = new HashSet<>();
-		else
-			retorno = user.getLinks();
-		return retorno;
+		return user.getLinks();
 	}
 
 	public Link addLink(String email, String name, String href, String importance) throws Exception {

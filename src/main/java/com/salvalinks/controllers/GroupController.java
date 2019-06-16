@@ -76,5 +76,20 @@ public class GroupController {
 		return new ResponseEntity<>(this.groupService
 				.renameGroup(this.userService.checkJWT(http.getHeader("Authorization")), name, newName),HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/group/getall", method = RequestMethod.GET)
+	public ResponseEntity<Set<Group>> getAll(HttpServletRequest http)
+			throws Exception {
+		return new ResponseEntity<>(this.groupService
+				.getAll(this.userService.checkJWT(http.getHeader("Authorization"))),HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/group/getnames", method = RequestMethod.GET)
+	public ResponseEntity<Set<String>> getNames(HttpServletRequest http)
+			throws Exception {
+		return new ResponseEntity<>(this.groupService
+				.getNames(this.userService.checkJWT(http.getHeader("Authorization"))),HttpStatus.OK);
+	}
+
 
 }

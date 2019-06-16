@@ -1,8 +1,10 @@
 package com.salvalinks.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -94,6 +96,24 @@ public class GroupService {
 		}
 		return retorno;
 	}
+	
+	public Set<String> getNames(String email) {
+		User user = this.userService.getByEmail(email);
+		Set<String> retorno = new HashSet<String>();
+		Iterator<Group> iterator = user.getGroups().iterator();
+		while (iterator.hasNext()) {
+			Group group = (Group) iterator.next();
+			retorno.add(group.getName());
+		}
+		
+		return retorno;
+	}
+	
+	public Set<Group> getAll(String email) {
+		User user = this.userService.getByEmail(email);
+		return user.getGroups();
+	}
+	
 
 	public void deleteGroup(String email, String name) {
 		User user = this.userService.getByEmail(email);

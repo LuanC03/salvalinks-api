@@ -93,5 +93,10 @@ public class UserController {
 		this.userService.deleteAll();
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/users/getusername", method = RequestMethod.GET)
+	public ResponseEntity<String> getUsername(HttpServletRequest http) throws Exception {
+		return new ResponseEntity<>(this.userService.getUsername(this.userService.checkJWT(http.getHeader("Authorization"))),HttpStatus.OK);
+	}
 
 }

@@ -233,6 +233,11 @@ public class UserService {
 		code = Integer.toString(Math.abs(r.nextInt()), 36).substring(0, 6);
 		return code.toUpperCase();
 	}
+	
+	public String getUsername(String email) {
+		User user = this.getByEmail(email);
+		return user.getName();
+	}
 
 	public String logar(String email, String password) throws Exception {
 		User user = this.getByEmail(email.toLowerCase());

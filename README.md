@@ -20,11 +20,11 @@
     - [x] RF-26 Cadastrar usuário
     
  * ##### 2ª Sprint
-    - [ ] RF-07 Usuário clica na notificação e abre o link automaticamente
+    - [x] RF-07 Usuário clica na notificação e abre o link automaticamente
     - [x] RF-08 Excluir notificação de abertura do link
     - [ ] RF-09 Soneca para as notificações
     - [x] RF-18 Hora default de notificações
-    - [ ] RF-19 O usuário poderá personalizar as notificações
+    - [x] RF-19 O usuário poderá personalizar as notificações
     - [x] RF-20 Notificação
     
  * ##### 3ª Sprint

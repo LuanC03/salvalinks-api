@@ -10,7 +10,7 @@
 * ##### 1ª Sprint
     - [x] RF-01 Login de usuário
     - [x] RF-02 Inserir link
-    - [ ] RF-03 Salvar link através do botão compartilhar
+    - [x] RF-03 Salvar link através do botão compartilhar
     - [x] RF-04 Gerar título automaticamente
     - [x] RF-05 Salvar data do link
     - [x] RF-10 Identifica tipo do link
